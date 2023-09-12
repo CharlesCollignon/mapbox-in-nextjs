@@ -70,130 +70,128 @@ export default function Mapbox() {
   };
 
   return (
-    <main className={classes.mainStyle}>
-      <Map
-        ref={mapRef}
-        mapboxAccessToken={mapboxToken}
-        attributionControl={false}
-        mapStyle={view}
-        style={classes.mapStyle as any}
-        initialViewState={{
-          latitude: 35.668641,
-          longitude: 139.750567,
-          zoom: 10,
-        }}
-        maxZoom={20}
-        minZoom={1}
-      >
-        <GeolocateControl position="top-left" />
-        <NavigationControl position="top-left" />
+    <Map
+      ref={mapRef}
+      mapboxAccessToken={mapboxToken}
+      attributionControl={false}
+      mapStyle={view}
+      style={{ width: "100%", height: "100%" }}
+      initialViewState={{
+        longitude: 20.047355,
+        latitude: 40.083855,
+        zoom: 1.6,
+      }}
+      maxZoom={20}
+      minZoom={1}
+    >
+      <GeolocateControl position="top-left" />
+      <NavigationControl position="top-left" />
 
-        {markers?.map((marker, index) => {
-          return (
-            <Marker
-              key={index}
-              longitude={marker?.longitude as any}
-              latitude={marker?.latitude as any}
-              anchor="bottom"
-              draggable={valid ? true : false}
-              onDragEnd={(event) => handleMarkerDrag(index, event)}
+      {markers?.map((marker, index) => {
+        return (
+          <Marker
+            key={index}
+            longitude={marker?.longitude as any}
+            latitude={marker?.latitude as any}
+            anchor="bottom"
+            draggable={valid ? true : false}
+            onDragEnd={(event) => handleMarkerDrag(index, event)}
+          >
+            <button
+              type="button"
+              className="cursor-pointer"
+              onClick={(e) => zoomToSelectedLoc(e, marker, index)}
+              onMouseEnter={(e) => handleHover(e, marker, index)}
             >
-              <button
-                type="button"
-                className="cursor-pointer"
-                onClick={(e) => zoomToSelectedLoc(e, marker, index)}
-                onMouseEnter={(e) => handleHover(e, marker, index)}
-              >
-                {
-                  <FaMapPin
-                    size={
-                      selectedMarker?.airport.woeid === marker?.woeid
-                        ? "35"
-                        : "30"
-                    }
-                    color={
-                      selectedMarker?.airport.woeid === marker?.woeid
-                        ? "red"
-                        : !changeView
-                        ? "white"
-                        : "black"
-                    }
-                  />
-                }
-              </button>
-            </Marker>
-          );
-        })}
+              {
+                <FaMapPin
+                  size={
+                    selectedMarker?.airport.woeid === marker?.woeid
+                      ? "35"
+                      : "30"
+                  }
+                  color={
+                    selectedMarker?.airport.woeid === marker?.woeid
+                      ? "red"
+                      : !changeView
+                      ? "white"
+                      : "black"
+                  }
+                />
+              }
+            </button>
+          </Marker>
+        );
+      })}
 
-        {valid ? (
-          <div style={{ position: "absolute", right: "1rem", top: "1rem" }}>
-            <Button
-              appearance="primary"
-              color="green"
-              size="lg"
-              onClick={() => {
-                setValid(false);
-                prevMarkers.current = markers;
-              }}
-            >
-              Save Changes
-            </Button>
-            <Button
-              appearance="primary"
-              color="red"
-              size="lg"
-              onClick={() => {
-                setValid(false);
-                setMarkers(prevMarkers.current);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-        ) : null}
-
-        {valid ? null : (
+      {valid ? (
+        <div style={{ position: "absolute", right: "1rem", top: "1rem" }}>
           <Button
             appearance="primary"
+            color="green"
             size="lg"
-            style={{ position: "absolute", right: "1rem", top: "1rem" }}
-            onClick={() => setValid(!valid)}
-          >
-            Edit Markers
-          </Button>
-        )}
-
-        {selectedMarker ? (
-          <Popup
-            offset={40}
-            latitude={selectedMarker.airport?.latitude}
-            longitude={selectedMarker.airport?.longitude}
-            onClose={() => {
-              setSelectedMarker(null);
+            onClick={() => {
+              setValid(false);
+              prevMarkers.current = markers;
             }}
-            closeButton={false}
           >
-            <Tooltip asset={selectedMarker.airport} />
-          </Popup>
-        ) : null}
+            Save Changes
+          </Button>
+          <Button
+            appearance="primary"
+            color="red"
+            size="lg"
+            onClick={() => {
+              setValid(false);
+              setMarkers(prevMarkers.current);
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      ) : null}
 
+      {valid ? null : (
         <Button
           appearance="primary"
-          color="cyan"
-          size="sm"
-          style={{ position: "absolute", right: "1rem", bottom: "1rem" }}
-          onClick={() => {
-            setChangeView(!changeView);
-            setView(
-              changeView
-                ? "mapbox://styles/mapbox/satellite-v9"
-                : "mapbox://styles/mapbox/streets-v11"
-            );
-          }}
+          size="lg"
+          style={{ position: "absolute", right: "1rem", top: "1rem" }}
+          onClick={() => setValid(!valid)}
         >
-          Change to {changeView ? "Satellite view" : "Street view"}
+          Edit Markers
         </Button>
-      </Map>
-    </main>
+      )}
+
+      {selectedMarker ? (
+        <Popup
+          offset={40}
+          latitude={selectedMarker.airport?.latitude}
+          longitude={selectedMarker.airport?.longitude}
+          onClose={() => {
+            setSelectedMarker(null);
+          }}
+          closeButton={false}
+        >
+          <Tooltip asset={selectedMarker.airport} />
+        </Popup>
+      ) : null}
+
+      <Button
+        appearance="primary"
+        color="cyan"
+        size="sm"
+        style={{ position: "absolute", right: "1rem", bottom: "1rem" }}
+        onClick={() => {
+          setChangeView(!changeView);
+          setView(
+            changeView
+              ? "mapbox://styles/mapbox/satellite-v9"
+              : "mapbox://styles/mapbox/streets-v11"
+          );
+        }}
+      >
+        Change to {changeView ? "Satellite view" : "Street view"}
+      </Button>
+    </Map>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import "rsuite/dist/rsuite.min.css";
 import "@styles/globals.css";
 import type { Metadata } from "next";

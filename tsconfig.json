@@ -43,8 +43,8 @@
         "./db/*"
       ],
       "@elements/*": [
-        "./components/elements/*"
-      ]
+        "./components/elements/*",
+      ],
     }
   },
   "include": [
